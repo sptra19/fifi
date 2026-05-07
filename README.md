@@ -1,2 +1,0 @@
-# fifi
-web ultah pacarsaya
