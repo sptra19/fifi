@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surat Spesial Untuk Fifi ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Dancing+Script:wght@700&family=Lora:ital,wght@0,700;1,400&display=swap');
+        
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(120deg, #fff0f3, #ffe3e8, #ffccd5); background-size: 200% 200%; animation: gradientMove 8s ease infinite; height: 100vh; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .bg-heart { position: absolute; color: #ffb3c6; opacity: 0.4; animation: floatUp 6s linear infinite; z-index: 1; }
+        @keyframes floatUp { 0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0; } 20% { opacity: 0.6; } 80% { opacity: 0.6; } 100% { transform: translateY(-10vh) scale(1.2) rotate(360deg); opacity: 0; } }
+
+        /* TAMPILAN DEPAN */
+        .front-container { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 900px; transition: opacity 0.8s, transform 0.8s; z-index: 20; }
+        .cake-container { flex: 1; display: flex; justify-content: flex-end; padding-right: 30px; }
+        .cake-img { width: 100%; max-width: 380px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); animation: floatCake 3s ease-in-out infinite; }
+        @keyframes floatCake { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .text-container { flex: 1; color: #8c1c38; text-align: left; }
+        .happy-birthday-text { font-family: 'Lora', serif; font-size: 85px; font-weight: 700; line-height: 0.9; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.05); }
+        .gift-text { font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 600; margin-bottom: 30px; letter-spacing: 1px; }
+        .button-container { display: flex; gap: 15px; }
+        .custom-button { background-color: #8c1c38; color: white; font-size: 16px; font-weight: 600; padding: 12px 35px; border-radius: 30px; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(140, 28, 56, 0.3); }
+        .custom-button:hover { background-color: #5c1224; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(140, 28, 56, 0.4); }
+
+        /* AMPLOP & SURAT */
+        .envelope-wrapper { position: absolute; width: 440px; height: 280px; transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); z-index: 30; opacity: 0; transform: scale(0.8) translateY(50px); pointer-events: none; }
+        .envelope-wrapper.show { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+        .envelope { position: absolute; width: 100%; height: 100%; background: #ff7aa2; border-radius: 0 0 15px 15px; box-shadow: 0 25px 50px rgba(255, 105, 135, 0.4); }
+        .wax-seal { position: absolute; top: 150px; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; background: #d81159; border-radius: 50%; z-index: 40; color: white; font-family: 'Dancing Script', cursive; font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 12px rgba(0,0,0,0.3), 0 6px 15px rgba(0,0,0,0.3); transition: 0.4s; border: 3px solid #ff4d6d; }
+        .flap { position: absolute; top: 0; left: 0; border-left: 220px solid transparent; border-right: 220px solid transparent; border-top: 160px solid #ff6b96; transform-origin: top; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.2s; z-index: 30; }
+        .pocket { position: absolute; bottom: 0; left: 0; border-left: 220px solid #ff9ebb; border-right: 220px solid #ff9ebb; border-bottom: 150px solid #ff4d6d; border-radius: 0 0 15px 15px; z-index: 20; pointer-events: none; }
+        .letter { position: absolute; bottom: 10px; left: 20px; right: 20px; height: 250px; background: #fffdf8; border-radius: 10px; transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 10; padding: 30px 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0.9; }
+        .envelope-wrapper.open .flap { transform: rotateX(180deg); z-index: 5; }
+        .envelope-wrapper.open .wax-seal { opacity: 0; }
+        .envelope-wrapper.open .letter { transform: translateY(-300px) scale(1.15); z-index: 50; opacity: 1; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .envelope-wrapper.open .envelope, .envelope-wrapper.open .pocket, .envelope-wrapper.open .flap { opacity: 0.4; transition: opacity 1s ease 0.5s; }
+        .letter-title { font-family: 'Dancing Script', cursive; font-size: 32px; color: #d81159; margin-bottom: 5px; }
+        .input-password { width: 85%; text-align: center; border-bottom: 2px dashed #ffb3c6; outline: none; margin: 20px 0; padding: 8px; font-size: 16px; letter-spacing: 4px; color: #555; background: transparent; transition: 0.3s; }
+        .input-password:focus { border-bottom: 2px solid #ff4d6d; }
+        .shake { animation: shake 0.5s; }
+        @keyframes shake { 0%, 100% { transform: translateY(-300px) scale(1.15) translateX(0); } 25% { transform: translateY(-300px) scale(1.15) translateX(-10px); } 50% { transform: translateY(-300px) scale(1.15) translateX(10px); } 75% { transform: translateY(-300px) scale(1.15) translateX(-10px); } }
+
+        /* ANIMASI BUNGA */
+        .flower-particle { position: fixed; z-index: 9999; pointer-events: none; left: 50%; top: 50%; font-size: 80px; transform: translate(-50%, -50%) scale(0); animation: flower-boom-animation 3.5s cubic-bezier(0.5, 0, 0.2, 1) forwards; }
+        @keyframes flower-boom-animation { 0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; } 40% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1) rotate(var(--rot)); opacity: 1; } 100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(40) rotate(calc(var(--rot) + 45deg)); opacity: 1; } }
+        .pink-overlay { position: fixed; inset: 0; background: #fff0f3; z-index: 9998; opacity: 0; transition: 0.5s; pointer-events: none; }
+
+        /* MENU UTAMA TAMPILAN */
+        .menu-section { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; }
+        .menu-section.active { opacity: 1; pointer-events: auto; }
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-top: 30px; width: 100%; max-width: 600px; padding: 0 20px; }
+        .menu-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); padding: 30px 20px; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(255, 105, 135, 0.15); border: 2px solid white; cursor: pointer; transition: 0.3s; }
+        .menu-card:hover { transform: translateY(-10px) scale(1.05); box-shadow: 0 15px 40px rgba(255, 105, 135, 0.3); background: white; border-color: #ffb3c6; }
+    </style>
+</head>
+<body>
+
+    <div id="bg-particles"></div>
+
+    <div class="front-container" id="front-layout">
+        <div class="cake-container">
+            <img src="cake.png" alt="Birthday Cake" class="cake-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/826/826839.png'">
+        </div>
+        <div class="text-container">
+            <h1 class="happy-birthday-text">Happy<br>Birthday</h1>
+            <p class="gift-text">do you want to see your gift?</p>
+            <div class="button-container">
+                <button class="custom-button" onclick="showEnvelope()">yes!!!</button>
+                <button class="custom-button" onclick="saySayang()">nooo</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="envelope-wrapper" id="env-wrapper" onclick="openEnvelope()">
+        <div class="envelope"></div>
+        <div class="flap" id="flap"></div>
+        <div class="wax-seal">Fifi</div>
+        <div class="pocket"></div>
+        <div class="letter" id="letter" onclick="event.stopPropagation()">
+            <h3 class="letter-title">Hanya Untuk Fifi</h3>
+            <p class="text-xs text-gray-500 font-['Lora'] italic">Masukkan tanggal jadian kita ya <br>(DDMMYYYY)</p>
+            <input type="password" id="pass-input" placeholder="••••••••" class="input-password">
+            <button onclick="checkLogin()" class="w-[85%] bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 text-white text-sm font-semibold py-3 rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95">
+                Buka Kado 🎁
+            </button>
+            <p id="error-msg" class="text-[11px] text-red-500 mt-2 hidden font-medium">Ops, kodenya salah sayang 🥺</p>
+        </div>
+    </div>
+
+    <div id="pink-screen" class="pink-overlay"></div>
+
+    <div class="menu-section" id="menu-utama">
+        <h2 class="text-5xl font-[Dancing Script] text-[#8c1c38] mb-2 drop-shadow-sm">Pilih Hadiahmu Sayang! 🎁</h2>
+        <p class="text-pink-600 font-medium text-lg mb-4">Hari ini Fifi mau ngapain nih?</p>
+        <div class="menu-grid">
+            <div class="menu-card" onclick="window.location.href='foto.html'"><div class="text-5xl mb-3">📸</div><h3 class="font-bold text-gray-800 text-lg">Foto & Kata Cantik</h3></div>
+            <div class="menu-card" onclick="window.location.href='nonton.html'"><div class="text-5xl mb-3">🎬</div><h3 class="font-bold text-gray-800 text-lg">Nonton Bioskop</h3></div>
+            <div class="menu-card" onclick="window.location.href='dinner.html'"><div class="text-5xl mb-3">🍽️</div><h3 class="font-bold text-gray-800 text-lg">Romantic Dinner</h3></div>
+            <div class="menu-card" onclick="window.location.href='jalan.html'"><div class="text-5xl mb-3">🏖️</div><h3 class="font-bold text-gray-800 text-lg">Jalan-jalan</h3></div>
+        </div>
+    </div>
+
+    <script>
+        const bgContainer = document.getElementById('bg-particles');
+        for(let i=0; i<15; i++) {
+            let heart = document.createElement('div');
+            heart.innerHTML = ['🤍','🩷','✨'][Math.floor(Math.random()*3)];
+            heart.className = 'bg-heart text-xl';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDelay = Math.random() * 5 + 's';
+            heart.style.fontSize = (Math.random() * 1 + 1) + 'rem';
+            bgContainer.appendChild(heart);
+        }
+
+        let isOpen = false;
+        function saySayang() { alert("Yahh, kok nggak mau sih Fifi? 🥺 Klik Yes dong!"); }
+        function showEnvelope() {
+            const front = document.getElementById('front-layout');
+            const env = document.getElementById('env-wrapper');
+            front.style.opacity = '0'; front.style.transform = 'scale(0.9)';
+            setTimeout(() => { front.style.display = 'none'; env.classList.add('show'); }, 800);
+        }
+        function openEnvelope() {
+            if (!isOpen) {
+                document.getElementById('env-wrapper').classList.add('open');
+                setTimeout(() => { document.getElementById('pass-input').focus(); }, 800);
+                isOpen = true;
+            }
+        }
+        document.getElementById("pass-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") { event.preventDefault(); checkLogin(); }
+        });
+        function checkLogin() {
+            if(!isOpen) return;
+            const pass = document.getElementById('pass-input').value;
+            const letter = document.getElementById('letter');
+            const errorMsg = document.getElementById('error-msg');
+            const envWrapper = document.getElementById('env-wrapper');
+
+            if(pass === "17052005") { 
+                errorMsg.classList.add('hidden');
+                envWrapper.style.opacity = '0'; envWrapper.style.transform = 'scale(0.8) translateY(-100px)';
+                triggerFlowerExplosion();
+            } else {
+                errorMsg.classList.remove('hidden');
+                letter.classList.remove('shake'); void letter.offsetWidth; letter.classList.add('shake');
+            }
+        }
+        function triggerFlowerExplosion() {
+            const screenOverlay = document.getElementById('pink-screen');
+            const menuUtama = document.getElementById('menu-utama');
+            document.getElementById('bg-particles').style.display = 'none';
+            
+            const emojis = ['🌸', '🌺', '🌷'];
+            for (let i = 0; i < 21; i++) {
+                setTimeout(() => {
+                    let flower = document.createElement('div');
+                    flower.className = 'flower-particle';
+                    flower.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                    let angle = (i / 21) * 360; 
+                    let distance = 150 + Math.random() * 150; 
+                    let x = Math.cos(angle * Math.PI / 180) * distance;
+                    let y = Math.sin(angle * Math.PI / 180) * distance;
+                    let rotate = Math.random() * 360;
+                    flower.style.setProperty('--tx', `${x}px`);
+                    flower.style.setProperty('--ty', `${y}px`);
+                    flower.style.setProperty('--rot', `${rotate}deg`);
+                    document.body.appendChild(flower);
+                }, i * 50); 
+            }
+            setTimeout(() => {
+                screenOverlay.style.opacity = '1'; document.getElementById('env-wrapper').style.display = 'none';
+            }, 3200);
+            setTimeout(() => {
+                screenOverlay.style.opacity = '0'; menuUtama.classList.add('active'); 
+                document.querySelectorAll('.flower-particle').forEach(el => el.remove());
+            }, 3800);
+        }
+    </script>
+</body>
+</html>

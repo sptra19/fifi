@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Album Spesial Fifi ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Dancing+Script:wght@700&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fff0f3, #ffe3e8);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* --- WADAH BUKU UTAMA --- */
+        .book-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 80vh;
+            position: relative;
+        }
+
+        /* --- STYLING HALAMAN BUKU --- */
+        .page {
+            background-color: #fffdf8; /* Warna kertas krem estetik */
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.03); /* Bayangan dalam kertas */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Cover Depan & Belakang (Lebih Tebal) */
+        .page.--hard {
+            background: linear-gradient(145deg, #ff7aa2, #d81159);
+            border: 2px solid #8c1c38;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.1);
+        }
+
+        /* --- DESAIN ISI HALAMAN --- */
+        .page-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Desain Cover Depan */
+        .cover-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 50px;
+            color: white;
+            text-align: center;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+        
+        .cover-subtitle {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            color: #ffe3e8;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        /* Desain Bingkai Foto Polaroid di dalam buku */
+        .photo-frame {
+            background: white;
+            padding: 15px 15px 25px 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 2px;
+            width: 90%;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: rotate(-1.5deg); /* Sedikit miring natural */
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 2px;
+            margin-bottom: 15px;
+            background: #eee;
+        }
+
+        .photo-caption {
+            font-family: 'Dancing Script', cursive;
+            font-size: 28px;
+            color: #d81159;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* Nomor Halaman di ujung bawah */
+        .page-number {
+            position: absolute;
+            bottom: 15px;
+            font-family: 'Lora', serif;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .page-number.left { left: 20px; }
+        .page-number.right { right: 20px; }
+
+        /* Instruksi Geser Buka */
+        .instruction {
+            position: absolute;
+            bottom: 20px;
+            color: #ff4d6d;
+            font-weight: 600;
+            font-size: 14px;
+            animation: pulse 1.5s infinite;
+            pointer-events: none;
+            z-index: 100;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: translateX(0); } 50% { opacity: 0.5; transform: translateX(10px); } }
+
+        /* Tombol Kembali */
+        .btn-back {
+            padding: 12px 35px;
+            background: #8c1c38;
+            color: white;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(140, 28, 56, 0.3);
+            transition: 0.3s;
+            margin-top: 10px;
+            z-index: 100;
+        }
+        .btn-back:hover { background: #d81159; transform: translateY(-3px); }
+
+    </style>
+</head>
+<body>
+
+    <p class="instruction" id="instruction">👉 Geser / Tarik ujung kertas untuk membuka halaman</p>
+
+    <div class="book-wrapper">
+        <div id="flipbook">
+            </div>
+    </div>
+
+    <a href="index.html" class="btn-back">🏠 Kembali ke Menu Utama</a>
+
+    <script>
+        // =========================================================
+        // DATA 15 FOTO CANTIK FIFI
+        // Ganti link di dalam tanda kutip dengan link fotonya
+        // =========================================================
+        const dataFotoFifi = [
+            { src: "https://i.pinimg.com/736x/87/40/d5/8740d588da61eeab1b8ceb4bf3cc53d5.jpg", caption: "Senyum pertama yang bikin jatuh cinta ❤️" },
+            { src: "https://i.pinimg.com/736x/d4/ec/3b/d4ec3b5ee0e9dc3b4f65c5e8869a8b1d.jpg", caption: "Bidadariku yang paling cantik ✨" },
+            { src: "https://i.pinimg.com/736x/21/cd/15/21cd1557997a30cfebcfb7c126ecbdba.jpg", caption: "Tatapan manis kesayanganku" },
+            // FOTO 4 - 15 (Silakan diganti linknya)
+            { src: "https://via.placeholder.com/350x450/ffe3e8/d81159?text=Foto+Fifi+4", caption: "Selalu mempesona 😍" },
+            { src: "https://via.placeholder.com/350x450/ffe3e8/d81159?text=Foto+Fifi+5", caption: "Gemesin banget sih" },
+            { src: "https://via.placeholder.com/350x450/ffe3e8/d81159?text=Foto+Fifi+6", caption: "Cantiknya natural 🌸" },
+            { src: "https://via.placeholder.com/350x450/ffe3e8/d81159?text=Foto+Fifi+7", caption: "Duniaku berpusat padamu" },
+            { src: "https://via.placeholder.com/350x450/ffe3e8/d81159?text=Foto+Fifi+8", caption: "My everything ❤️" },
+            { src: "https://via.placeholder.com/350x450/ffe3e8/d81159?text=Foto+Fifi+9", caption: "Senyummu = Kebahagiaanku" },
+            { src: "https://via.placeholder.com/350x450/ffe3e8/d81159?text=Foto+Fifi+10", caption: "Gaya apa aja cocok ✨" },
+            { src: "https://via.placeholder.com/350x450/ffe3e8/d81159?text=Foto+Fifi+11", caption: "Pacar siapa sih ini?" },
+            { src: "https://via.placeholder.com/350x450/ffe3e8/d81159?text=Foto+Fifi+12", caption: "Perfect in every way" },
+            { src: "https://via.placeholder.com/350x450/ffe3e8/d81159?text=Foto+Fifi+13", caption: "I love you Fifi" },
+            { src: "https://via.placeholder.com/350x450/ffe3e8/d81159?text=Foto+Fifi+14", caption: "Terima kasih sudah ada" },
+            { src: "https://via.placeholder.com/350x450/ffe3e8/d81159?text=Foto+Fifi+15", caption: "Selamanya cantikku ❤️" }
+        ];
+
+        // =========================================================
+        // LOGIKA PEMBUATAN BUKU & INISIALISASI (TIDAK PERLU DIUBAH)
+        // =========================================================
+        const bookContainer = document.getElementById('flipbook');
+        let bookHTML = "";
+
+        // 1. Cover Depan (Hardcover)
+        bookHTML += `
+            <div class="page" data-density="hard">
+                <div class="page-content">
+                    <h1 class="cover-title">Album<br>Kenangan<br>Spesial</h1>
+                    <p class="cover-subtitle">Teruntuk Kesayanganku, Fifi</p>
+                </div>
+            </div>
+        `;
+
+        // 2. Balik Cover Depan (Kosong / Pembuka)
+        bookHTML += `
+            <div class="page">
+                <div class="page-content">
+                    <p class="font-['Lora'] italic text-gray-500 text-center px-4">"Dari setiap detik yang berlalu, ada satu hal yang tak pernah berubah: betapa aku mengagumimu."</p>
+                </div>
+            </div>
+        `;
+
+        // 3. Loop 15 Foto Fifi (Halaman Isi)
+        dataFotoFifi.forEach((foto, index) => {
+            // Posisi nomor halaman (kiri atau kanan)
+            const pageNumClass = (index % 2 === 0) ? 'right' : 'left';
+            
+            bookHTML += `
+                <div class="page">
+                    <div class="page-content">
+                        <div class="photo-frame">
+                            <img src="${foto.src}" alt="Fifi ${index+1}">
+                            <p class="photo-caption">${foto.caption}</p>
+                        </div>
+                        <span class="page-number ${pageNumClass}">${index + 1}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        // 4. Halaman Penutup sebelum Cover Belakang
+        bookHTML += `
+            <div class="page">
+                <div class="page-content">
+                    <h2 class="text-4xl font-[Dancing Script] text-[#8c1c38] mb-2 text-center">I Love You<br>Fifi ❤️</h2>
+                    <p class="font-['Lora'] italic text-gray-500">Happy Birthday Sayang</p>
+                </div>
+            </div>
+        `;
+
+        // 5. Balik Cover Belakang (Kosong)
+        bookHTML += `<div class="page"></div>`;
+
+        // 6. Cover Belakang (Hardcover)
+        bookHTML += `
+            <div class="page" data-density="hard">
+                <div class="page-content"></div>
+            </div>
+        `;
+
+        // Masukkan semua halaman ke HTML
+        bookContainer.innerHTML = bookHTML;
+
+        // Inisialisasi PageFlip Engine
+        document.addEventListener('DOMContentLoaded', function() {
+            const pageFlip = new St.PageFlip(document.getElementById('flipbook'), {
+                width: 380, // Lebar dasar buku
+                height: 520, // Tinggi dasar buku
+                size: "stretch", // Responsif mengikuti layar
+                minWidth: 300,
+                maxWidth: 450,
+                minHeight: 400,
+                maxHeight: 650,
+                maxShadowOpacity: 0.4, // Bayangan lipatan kertas super realistis
+                showCover: true, // Berperilaku seperti buku tebal
+                mobileScrollSupport: false,
+                usePortrait: true // Memungkinkan mode 1 halaman saat di HP
+            });
+
+            // Load halaman dari elemen yang sudah dibuat
+            pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+
+            // Sembunyikan instruksi saat halaman mulai dibalik
+            pageFlip.on('flip', (e) => {
+                document.getElementById('instruction').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
