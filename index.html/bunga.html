@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hadia kecil untuk kamu sayang ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: #030005; height: 100vh; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Montserrat', sans-serif; color: #fff;
+            perspective: 1000px;
+        }
+
+        /* --- Latar Belakang (Akan Berubah Drastis Nanti) --- */
+        .bg-gradient {
+            position: fixed; inset: 0; z-index: -5;
+            background: radial-gradient(circle at 50% 50%, #150011 0%, #000000 100%);
+            transition: background 4s ease-out;
+        }
+
+        /* --- Kejutan: Layar Kilat Putih & Shockwave --- */
+        #flashScreen {
+            position: fixed; inset: 0; background: #fff; z-index: 1500;
+            opacity: 0; pointer-events: none; transition: opacity 1.5s ease-out;
+        }
+
+        .shockwave {
+            position: fixed; top: 40%; left: 50%; width: 10px; height: 10px;
+            border-radius: 50%; border: 20px solid rgba(255, 255, 255, 0.8);
+            transform: translate(-50%, -50%) scale(0); opacity: 0;
+            z-index: 1400; pointer-events: none;
+        }
+
+        .explode {
+            animation: blast 3s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes blast {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; border-width: 50px; }
+            100% { transform: translate(-50%, -50%) scale(150); opacity: 0; border-width: 0px; }
+        }
+
+        /* --- Canvas Partikel Anti-Lag --- */
+        #magicCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none;
+        }
+
+        /* --- UI Portal --- */
+        .portal {
+            text-align: center; z-index: 1000;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            transition: all 2s ease;
+        }
+        
+        .title-glow {
+            font-family: 'Cinzel', serif; font-size: 16px; letter-spacing: 12px;
+            color: #ffb3c6; margin-bottom: 30px; text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255, 179, 198, 0.6);
+            animation: breatheText 3s infinite alternate;
+        }
+
+        @keyframes breatheText { 0% { opacity: 0.6; } 100% { opacity: 1; text-shadow: 0 0 30px #ff4d6d; } }
+
+        .btn-cinematic {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255, 179, 198, 0.5);
+            color: #ffb3c6; padding: 15px 40px; border-radius: 50px; font-size: 12px;
+            font-weight: 600; letter-spacing: 4px; cursor: pointer; text-transform: uppercase;
+            transition: all 0.4s ease; backdrop-filter: blur(5px);
+        }
+        .btn-cinematic:hover {
+            background: #ffb3c6; color: #000;
+            box-shadow: 0 0 40px #ffb3c6; transform: scale(1.05);
+        }
+
+        /* --- Wadah Tanaman --- */
+        .plant-wrapper {
+            position: absolute; bottom: 0; left: 50%;
+            width: 50vmin; height: 60vh; 
+            z-index: 10; display: none;
+            transform-origin: bottom center; 
+            transform-style: preserve-3d;
+            transform: translateX(-50%) rotateX(var(--tiltX, 0deg)) rotateY(var(--tiltY, 0deg));
+            transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* --- Tangkai Estetik (SVG) --- */
+        .stem-container {
+            position: absolute; top: 0; left: 0; 
+            width: 100%; height: 100%; overflow: visible;
+        }
+
+        .stem-path {
+            fill: none; stroke: url(#stemGrad); stroke-linecap: round;
+            filter: drop-shadow(0 0 5px rgba(255, 77, 109, 0.5));
+            stroke-dasharray: 1000; stroke-dashoffset: 1000; 
+        }
+        .main-stem { stroke-width: 4; }
+        .side-stem { stroke-width: 2.5; }
+
+        .leaf-path {
+            fill: url(#stemGrad); opacity: 0;
+            filter: drop-shadow(0 0 4px rgba(255, 77, 109, 0.4));
+            transform: scale(0); transition: all 3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* --- Kepala Bunga --- */
+        .flower-head {
+            position: absolute; 
+            transform: translate(-50%, -50%) scale(var(--scale));
+            animation: sway 6s ease-in-out infinite alternate;
+        }
+
+        #flowerCenter { left: 50%; top: 12.5%; --scale: 1.1; }
+        #flowerLeft { left: 15%; top: 25%; --scale: 0.8; animation-delay: -1.5s; }
+        #flowerRight { left: 85%; top: 25%; --scale: 0.8; animation-delay: -3s; }
+
+        @keyframes sway {
+            0% { transform: translate(-50%, -50%) scale(var(--scale)) rotateZ(-3deg); }
+            100% { transform: translate(-50%, -50%) scale(var(--scale)) rotateZ(3deg); }
+        }
+
+        /* Inti Bunga Bercahaya */
+        .flower-core {
+            position: absolute; top: 0; left: 0; width: 20px; height: 20px;
+            background: #fff; border-radius: 50%; transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px #fff, 0 0 40px #ffb3c6, 0 0 80px #ff4d6d;
+            opacity: 0; transition: all 3s ease; z-index: 20;
+        }
+
+        /* Saat kejutan dimulai, intinya akan meledak cahayanya */
+        .core-supernova {
+            box-shadow: 0 0 50px #fff, 0 0 150px #fff, 0 0 300px #ffb3c6, 0 0 500px #ff4d6d !important;
+            transform: translate(-50%, -50%) scale(1.5) !important;
+            background: #fff;
+        }
+
+        /* --- Model Bunga (14 Kelopak per bunga = Sangat Ringan) --- */
+        .petal {
+            position: absolute; bottom: 0; left: 50%;
+            width: var(--w); height: var(--h); margin-left: calc(var(--w) / -2);
+            border-radius: 50% 50% 20% 20% / 60% 60% 40% 40%;
+            background: radial-gradient(circle at bottom, var(--c1) 0%, var(--c2) 70%, transparent 100%);
+            transform-origin: bottom center; opacity: 0;
+            border: 1px solid rgba(255,255,255,0.2);
+            will-change: transform, opacity;
+            transform: rotateZ(var(--angle)) scale(0);
+            
+            /* Animasi Mekar Dibuat Jauh Lebih Lambat (Sesuai 40 Detik) */
+            animation: smoothBloom 8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes smoothBloom {
+            0% { transform: rotateZ(var(--angle)) scale(0); opacity: 0; }
+            100% { transform: rotateZ(var(--angle)) scale(1); opacity: 0.9; }
+        }
+
+        /* --- Kontrol Navigasi --- */
+        .end-controls {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 20px; opacity: 0; pointer-events: none; z-index: 2000;
+            transition: opacity 3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MUSIK -->
+    <audio id="bgAudio" src="Lauv & LANY - Mean It (Lyrics).mp3"></audio>
+
+    <!-- Kejutan Visual -->
+    <div id="flashScreen"></div>
+    <div class="shockwave" id="shockwave"></div>
+
+    <div class="bg-gradient" id="bgGrad"></div>
+    <canvas id="magicCanvas"></canvas>
+
+    <!-- UI Portal -->
+    <div class="portal" id="portal">
+        <h2 class="title-glow">hadia kecil untuk kamu sayang</h2>
+        <button class="btn-cinematic" onclick="startSequence()">aslinya nanti nyusul yahh</button>
+    </div>
+
+    <!-- Tiga Bunga -->
+    <div class="plant-wrapper" id="plant">
+        
+        <svg class="stem-container" viewBox="0 0 200 400" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="stemGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stop-color="#023e8a"/>
+                    <stop offset="50%" stop-color="#ff4d6d"/>
+                    <stop offset="100%" stop-color="#ffb3c6"/>
+                </linearGradient>
+            </defs>
+            <path class="stem-path main-stem" id="stemCenter" d="M 100 400 C 110 250 90 150 100 50" />
+            <path class="stem-path side-stem" id="stemLeft" d="M 100 250 C 60 210 30 150 30 100" />
+            <path class="stem-path side-stem" id="stemRight" d="M 100 210 C 140 180 170 140 170 100" />
+
+            <path class="leaf-path" id="leaf1" d="M 105 320 C 120 310 135 300 145 285 C 130 295 115 315 105 320" style="transform-origin: 105px 320px;" />
+            <path class="leaf-path" id="leaf2" d="M 95 280 C 75 270 55 260 45 240 C 60 255 80 275 95 280" style="transform-origin: 95px 280px;" />
+        </svg>
+
+        <div class="flower-head" id="flowerCenter"><div class="flower-core"></div></div>
+        <div class="flower-head" id="flowerLeft"><div class="flower-core"></div></div>
+        <div class="flower-head" id="flowerRight"><div class="flower-core"></div></div>
+    </div>
+
+    <!-- Tombol Navigasi Bawah (Muncul di detik ke 40) -->
+    <div class="end-controls" id="endControls">
+        <button class="btn-cinematic" onclick="location.href='index.html'">⌂ Menu Utama yoooo</button>
+        <button class="btn-cinematic" onclick="location.reload()">↺ Mulai Kembali lagi sayang?</button>
+    </div>
+
+    <script>
+        /* --- 1. CANVAS PARTIKEL --- */
+        const canvas = document.getElementById('magicCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+
+        let particles = [];
+        let mouse = { x: -1000, y: -1000, radius: 100 };
+        let isSupernova = false; // Trigger untuk partikel menggila di detik 35
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                // Base speed lambat
+                this.baseSpeedY = Math.random() * -0.3 - 0.1;
+                this.baseSpeedX = Math.random() * 0.2 - 0.1;
+                this.speedY = this.baseSpeedY;
+                this.speedX = this.baseSpeedX;
+                this.hue = Math.random() > 0.5 ? 340 : 350;
+                this.alpha = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                // Jika Supernova terjadi, partikel melesat ke atas & menyala terang
+                if(isSupernova) {
+                    this.speedY = this.baseSpeedY * 15;
+                    this.speedX = this.baseSpeedX * 15;
+                    this.alpha = 1;
+                } else {
+                    this.speedY = this.baseSpeedY;
+                    this.speedX = this.baseSpeedX;
+                    this.alpha += (Math.random() * 0.01 - 0.005);
+                    if (this.alpha < 0.1) this.alpha = 0.1;
+                    if (this.alpha > 0.7) this.alpha = 0.7;
+                }
+
+                this.y += this.speedY; this.x += this.speedX;
+                
+                // Menghindar halus saat disentuh
+                let dx = mouse.x - this.x; let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < mouse.radius && !isSupernova) {
+                    let force = (mouse.radius - distance) / mouse.radius;
+                    this.x -= (dx / distance) * force * 2;
+                    this.y -= (dy / distance) * force * 2;
+                }
+
+                if (this.y < -20) {
+                    this.y = canvas.height + 20; this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsl(${this.hue}, 100%, 85%)`;
+                ctx.shadowColor = `hsl(${this.hue}, 100%, 60%)`; ctx.shadowBlur = 8;
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            let count = window.innerWidth > 768 ? 90 : 50; 
+            for (let i = 0; i < count; i++) particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles(); animateParticles();
+
+        /* --- 2. INTERAKSI ELUS / BENDING --- */
+        const plant = document.getElementById('plant');
+        let isTouching = false;
+
+        function handleMove(e) {
+            let cx = e.touches ? e.touches[0].clientX : e.clientX;
+            let cy = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            mouse.x = cx; mouse.y = cy;
+            if (!isTouching && e.type !== 'mousemove') return;
+            if (cy < window.innerHeight / 4) return; 
+
+            let tiltY = ((cx - window.innerWidth / 2) / (window.innerWidth / 2)) * 15; 
+            let tiltX = ((cy - window.innerHeight) / window.innerHeight) * 12; 
+
+            plant.style.setProperty('--tiltX', `${tiltX}deg`);
+            plant.style.setProperty('--tiltY', `${tiltY}deg`);
+        }
+
+        function resetPlant() {
+            isTouching = false; mouse.x = -1000; mouse.y = -1000;
+            plant.style.setProperty('--tiltX', `0deg`);
+            plant.style.setProperty('--tiltY', `0deg`);
+        }
+
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('touchmove', handleMove, { passive: true });
+        window.addEventListener('touchstart', () => isTouching = true, { passive: true });
+        window.addEventListener('touchend', resetPlant);
+        window.addEventListener('mouseout', resetPlant);
+
+        /* --- 3. FUNGSI MEKAR HALUS --- */
+        function createOptimizedFlower(flowerId, delayStart) {
+            const flower = document.getElementById(flowerId);
+            flower.querySelector('.flower-core').style.opacity = '1';
+
+            const layers = [
+                { count: 8, w: '12vmin', h: '16vmin', c1: 'rgba(201, 24, 74, 0.8)', c2: 'rgba(255, 179, 198, 0.2)', delayBase: delayStart },
+                { count: 6, w: '9vmin',  h: '12vmin', c1: 'rgba(255, 77, 109, 0.9)', c2: 'rgba(255, 255, 255, 0.4)', delayBase: delayStart + 2 }
+            ];
+
+            layers.forEach((layer, layerIdx) => {
+                let rotationOffset = layerIdx * 25; 
+                for(let i = 0; i < layer.count; i++) {
+                    let petal = document.createElement('div');
+                    petal.className = 'petal';
+                    
+                    let angle = ((360 / layer.count) * i) + rotationOffset;
+                    let delay = layer.delayBase + (i * 0.4); // Mekar perlahan
+                    
+                    petal.style.setProperty('--angle', angle + 'deg');
+                    petal.style.setProperty('--w', layer.w);
+                    petal.style.setProperty('--h', layer.h);
+                    petal.style.setProperty('--c1', layer.c1);
+                    petal.style.setProperty('--c2', layer.c2);
+                    petal.style.setProperty('--delay', delay + 's');
+                    flower.appendChild(petal);
+                }
+            });
+        }
+
+        /* --- 4. SUTRADARA WAKTU (TIMELINE 40 DETIK) --- */
+        function startSequence() {
+            // DETIK 0: Mulai
+            const audio = document.getElementById('bgAudio');
+            audio.volume = 0.8; audio.play().catch(() => console.log("Lagu belum diatur!"));
+
+            const portal = document.getElementById('portal');
+            portal.style.opacity = '0'; portal.style.transform = 'translate(-50%, -60%) scale(0.9)';
+            setTimeout(() => portal.style.display = 'none', 1500);
+
+            plant.style.display = 'block';
+
+            // DETIK 2: Tangkai Utama Tumbuh Perlahan (Durasi 6s)
+            setTimeout(() => {
+                document.getElementById('stemCenter').style.transition = 'stroke-dashoffset 6s ease-in-out';
+                document.getElementById('stemCenter').style.strokeDashoffset = '0';
+            }, 2000);
+
+            // DETIK 6: Tangkai Cabang Tumbuh Perlahan (Durasi 5s)
+            setTimeout(() => {
+                ['stemLeft', 'stemRight'].forEach(id => {
+                    document.getElementById(id).style.transition = 'stroke-dashoffset 5s ease-out';
+                    document.getElementById(id).style.strokeDashoffset = '0';
+                });
+            }, 6000);
+
+            // DETIK 10: Daun Muncul
+            setTimeout(() => {
+                document.getElementById('leaf1').style.transform = 'scale(1)';
+                document.getElementById('leaf1').style.opacity = '1';
+                setTimeout(() => {
+                    document.getElementById('leaf2').style.transform = 'scale(1)';
+                    document.getElementById('leaf2').style.opacity = '1';
+                }, 1000);
+            }, 10000);
+
+            // DETIK 14 & 18: Bunga Mulai Mekar (Sangat Halus)
+            setTimeout(() => createOptimizedFlower('flowerCenter', 0), 14000);
+            setTimeout(() => {
+                createOptimizedFlower('flowerLeft', 0);
+                createOptimizedFlower('flowerRight', 1);
+            }, 18000);
+
+            // DETIK 32: Fase Antisipasi (Inti Bunga Mulai Overload Cahaya)
+            setTimeout(() => {
+                const cores = document.querySelectorAll('.flower-core');
+                cores.forEach(core => core.classList.add('core-supernova'));
+            }, 32000);
+
+            // DETIK 35: BOOM! KEJUTAN BESAR!
+            setTimeout(() => {
+                // 1. Shockwave meledak
+                const shockwave = document.getElementById('shockwave');
+                shockwave.classList.add('explode');
+
+                // 2. Layar kilat putih
+                const flash = document.getElementById('flashScreen');
+                flash.style.opacity = '1';
+                
+                // 3. Ubah Latar Belakang menjadi Super Terang (Dimensi Magis)
+                document.getElementById('bgGrad').style.background = 'radial-gradient(circle at 50% 70%, #4a0024 0%, #1a0014 60%, #000000 100%)';
+
+                // 4. Partikel Menggila (Supernova Effect)
+                isSupernova = true;
+
+                // Kembalikan kilat putih ke normal dengan perlahan
+                setTimeout(() => {
+                    flash.style.opacity = '0';
+                    isSupernova = false; // Partikel melambat lagi jadi elegan
+                }, 1000);
+
+            }, 35000);
+
+            // DETIK 40: Akhir Animasi, Munculkan Tombol
+            setTimeout(() => {
+                const controls = document.getElementById('endControls');
+                controls.style.pointerEvents = 'auto';
+                controls.style.opacity = '1';
+            }, 40000);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            initParticles();
+        });
+    </script>
+</body>
+</html>

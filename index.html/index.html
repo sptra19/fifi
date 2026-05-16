@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Princess Fifi ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&family=Caveat:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background: radial-gradient(circle at top, #ffd1df 0%, #7b1027 35%, #140006 100%);
+        }
+
+        /* --- EFEK GLOW --- */
+        .glow { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; animation: floatGlow 10s ease-in-out infinite; pointer-events: none; }
+        .glow1 { width: 500px; height: 500px; background: #ff4f8f; top: -150px; right: -100px; }
+        .glow2 { width: 450px; height: 450px; background: #ffd9e5; bottom: -150px; left: -100px; animation-delay: 3s; }
+        @keyframes floatGlow { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(50px); } }
+
+        /* --- PARTIKEL HATI --- */
+        .hearts { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+        .hearts span { position: absolute; bottom: -100px; color: rgba(255,255,255,0.4); animation: heartFloat linear infinite; }
+        @keyframes heartFloat { 0% { transform: translateY(0) scale(0.7); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-120vh) scale(1.5) rotate(45deg); opacity: 0; } }
+
+        /* --- MAIN CARD --- */
+        .main-card {
+            width: 90%; max-width: 500px; padding: 50px 30px;
+            border-radius: 40px; text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+            z-index: 10; transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .main-image { width: 200px; margin: 0 auto 25px; animation: floating 4s ease-in-out infinite; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.4)); border-radius: 20px; }
+        @keyframes floating { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-20px) rotate(2deg); } }
+
+        .title { font-family: 'Dancing Script', cursive; font-size: 55px; color: white; line-height: 1.2; text-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+        .btn-glow {
+            margin-top: 30px; padding: 15px 45px; border-radius: 50px;
+            background: linear-gradient(135deg, #ff5f99, #d81159);
+            color: white; font-weight: 700; font-size: 18px;
+            box-shadow: 0 10px 30px rgba(216, 17, 89, 0.4);
+            transition: 0.4s; cursor: pointer; border: none;
+        }
+        .btn-glow:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 40px rgba(216, 17, 89, 0.6); }
+
+        /* --- AMPLOP ANTI GLITCH --- */
+        .envelope-screen { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 1s; z-index: 50; }
+        .envelope-screen.show { opacity: 1; pointer-events: auto; }
+        .envelope-container { position: relative; width: 340px; height: 230px; }
+        .env-back { position: absolute; inset: 0; background: #d81159; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+        .letter { position: absolute; inset: 15px; background: #fffdf8; border-radius: 10px; padding: 25px; text-align: center; z-index: 2; transition: 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .env-front { position: absolute; inset: 0; background: #ff4f8f; border-radius: 12px; z-index: 3; clip-path: polygon(0 40%, 50% 65%, 100% 40%, 100% 100%, 0 100%); }
+        .env-flap { position: absolute; inset: 0; background: #ff7aa2; border-radius: 12px; z-index: 4; clip-path: polygon(0 0, 100% 0, 50% 60%); transform-origin: top; transition: 0.8s ease; }
+        .envelope-container.open .env-flap { transform: rotateX(180deg); z-index: 1; }
+        .envelope-container.open .letter { transform: translateY(-170px) scale(1.05); z-index: 5; }
+
+        /* --- MENU SCREEN --- */
+        .menu-screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 1s; z-index: 100; padding: 20px; }
+        .menu-screen.show { opacity: 1; pointer-events: auto; }
+        .menu-grid { width: 100%; max-width: 800px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        
+        .menu-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px; border-radius: 30px; text-align: center; transition: 0.4s;
+            cursor: pointer; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .menu-card:hover { transform: translateY(-10px); background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.4); }
+        .menu-icon { font-size: 50px; margin-bottom: 15px; display: block; }
+        .menu-name { font-size: 22px; font-weight: 700; color: white; }
+        .menu-desc { font-size: 13px; color: #ffd1df; margin-top: 8px; font-weight: 300; }
+
+        @media(max-width: 640px) {
+            .menu-grid { grid-template-columns: 1fr; }
+            .title { font-size: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow glow1"></div>
+    <div class="glow glow2"></div>
+    <div class="hearts" id="hearts"></div>
+
+    <div class="main-card" id="home">
+        <img src="99.png" class="main-image" onerror="this.src='https://cdn-icons-png.flaticon.com/512/826/826839.png'">
+        <h1 class="title">Happy Birthday<br>Princess Fifi ❤️</h1>
+        <p class="text-pink-100 text-sm mt-4 font-light">Aku punya sesuatu yang spesial untuk kamu, kesayanganku.</p>
+        <button class="btn-glow" onclick="showEnvelope()">Buka Kadonya 💌</button>
+    </div>
+
+    <div class="envelope-screen" id="env-screen">
+        <div class="envelope-container" id="envelope">
+            <div class="env-back"></div>
+            <div class="letter">
+                <h2 class="font-[Dancing Script] text-3xl text-[#d81159]">Hanya Untuk Fifi</h2>
+                <p class="text-gray-400 text-[10px] mt-2 italic font-light">Masukkan tanggal lahirmu (DDMMYYYY)</p>
+                <input type="password" id="password" class="w-full mt-4 p-2 text-center border-b-2 border-pink-200 outline-none text-xl tracking-[8px] bg-transparent" placeholder="••••••••">
+                <button class="btn-glow !mt-6 !py-2 !text-sm w-full" onclick="checkPassword()">BUKA KEJUTAN ✨</button>
+            </div>
+            <div class="env-front"></div>
+            <div class="env-flap"></div>
+        </div>
+    </div>
+
+    <div class="menu-screen" id="menu">
+        <h1 class="font-[Dancing Script] text-5xl text-white mb-2">Pilih Duniamu ❤️</h1>
+        <p class="text-pink-200 mb-10 font-light text-sm">Setiap kotak punya cerita spesial untukmu...</p>
+
+        <div class="menu-grid">
+            <div class="menu-card" onclick="window.location.href='foto.html'">
+                <span class="menu-icon">📸</span>
+                <h2 class="menu-name">Pesona Tercantik</h2>
+                <p class="menu-desc">Melihatmu adalah alasan aku jatuh cinta setiap hari.</p>
+            </div>
+
+            <div class="menu-card" onclick="window.location.href='kue.html'">
+                <span class="menu-icon">🎂</span>
+                <h2 class="menu-name">Kejutan Manis</h2>
+                <p class="menu-desc">Make a wish, Princess! Kue virtual untuk hari spesialmu.</p>
+            </div>
+
+            <div class="menu-card" onclick="window.location.href='bunga.html'">
+                <span class="menu-icon">💐</span>
+                <h2 class="menu-name">Taman Hati</h2>
+                <p class="menu-desc">Bunga yang mekar secantik senyumanmu hari ini.</p>
+            </div>
+
+            <div class="menu-card" onclick="window.location.href='kata.html'">
+                <span class="menu-icon">💌</span>
+                <h2 class="menu-name">Pesan Terakhir</h2>
+                <p class="menu-desc">Buka yang ini paling akhir ya, sayang. Ada rahasia.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Logika Partikel Hati
+        const heartsContainer = document.getElementById('hearts');
+        for(let i=0; i<35; i++){
+            const heart = document.createElement('span');
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random()*100 + 'vw';
+            heart.style.animationDuration = (6 + Math.random()*8) + 's';
+            heart.style.animationDelay = Math.random()*5 + 's';
+            heart.style.fontSize = (12 + Math.random()*20) + 'px';
+            heartsContainer.appendChild(heart);
+        }
+
+        // Auto jump ke menu jika ada hash #menu
+        window.onload = function() {
+            if(window.location.hash === '#menu') {
+                document.getElementById('home').style.display = 'none';
+                document.getElementById('menu').classList.add('show');
+            }
+        };
+
+        function showEnvelope(){
+            document.getElementById('home').style.opacity = "0";
+            document.getElementById('home').style.transform = "scale(0.9)";
+            setTimeout(() => {
+                document.getElementById('home').style.display = "none";
+                document.getElementById('env-screen').classList.add('show');
+            }, 800);
+            setTimeout(() => {
+                document.getElementById('envelope').classList.add('open');
+                document.getElementById('password').focus();
+            }, 1500);
+        }
+
+        function checkPassword(){
+            const pass = document.getElementById('password').value;
+            if(pass === "17052005" || pass === "170505"){
+                document.getElementById('env-screen').style.opacity = "0";
+                setTimeout(() => {
+                    document.getElementById('env-screen').style.display = "none";
+                    document.getElementById('menu').classList.add('show');
+                }, 1000);
+            } else {
+                alert("Salah sayang, masa lupa tanggal lahir sendiri? 🥺");
+            }
+        }
+    </script>
+</body>
+</html>
