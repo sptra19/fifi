@@ -185,7 +185,7 @@
             100% { filter: drop-shadow(0 0 10px #fff) drop-shadow(0 0 25px #ff107a) drop-shadow(0 0 50px #ff107a); }
         }
 
-        /* ANIMASI LILIN SUPER SMOOTH (ROBOTIC JUGGLING REMOVED) */
+        /* ANIMASI LILIN SUPER SMOOTH */
         .flame {
             opacity: 0; transform: scale(0); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             filter: drop-shadow(0 0 15px #fff) drop-shadow(0 0 35px #ff107a) drop-shadow(0 0 65px #ff107a);
@@ -196,7 +196,6 @@
             animation: smoothFlameFlicker 1.2s infinite ease-in-out alternate; 
         }
 
-        /* Variasi delay agar ayunan api antar lilin tidak kaku bersamaan */
         #flame1.ignited { animation-delay: 0s; }
         #flame2.ignited { animation-delay: 0.3s; }
         #flame3.ignited { animation-delay: 0.6s; }
@@ -297,7 +296,7 @@
 
     <div id="end-menu">
         <button class="btn-neon btn-small" onclick="location.reload()">Mau di ulang lagi sayang ku?</button>
-        <button class="btn-neon btn-small" onclick="location.href='index.html'">Kembali ke pilihan sayang</button>
+        <button class="btn-neon btn-small" onclick="location.href='index.html#menu'">Kembali ke pilihan sayang</button>
     </div>
 
     <script>
@@ -360,43 +359,36 @@
             type();
         }
 
-        // --- SUTRADARA TIMELINE (40 DETIK SPEKTAKULER) ---
+        // --- SUTRADARA TIMELINE ---
         function startTimeline() {
-            // Musik langsung berbunyi di detik ke-0
             document.getElementById('bgMusic').volume = 0.8;
             document.getElementById('bgMusic').play();
 
-            // Hilangkan Intro Screen
             document.getElementById('intro-screen').style.opacity = '0';
             setTimeout(() => { document.getElementById('intro-screen').style.visibility = 'hidden'; }, 1500);
 
-            // BARU: TEPAT 2 DETIK (2000ms) setelah musik mulai, Kue & Stage baru muncul dan dilukis
             setTimeout(() => { 
                 const mainStage = document.getElementById('main-stage');
                 mainStage.classList.add('show', 'start-draw'); 
             }, 2000);
 
-            // Garis lukisan kue neon selesai dan menstabilkan pancaran cahayanya
             setTimeout(() => { 
                 document.querySelectorAll('.draw-line').forEach(l => { 
                     l.style.strokeDasharray = 'none'; l.classList.add('stable-glow'); 
                 }); 
             }, 10000);
 
-            // Lilin Kiri Menyala + Letupan Confetti
             setTimeout(() => { 
                 document.getElementById('flame1').classList.add('ignited'); 
                 confetti({ particleCount: 50, spread: 80, origin: { x: 0.4, y: 0.5 }, colors: ['#ff107a', '#ffb3d9', '#fff'], gravity: 0.6 });
             }, 12000);
 
-            // Lilin Kanan Menyala + Letupan Confetti + Aura Lembut
             setTimeout(() => { 
                 document.getElementById('flame3').classList.add('ignited'); 
                 document.getElementById('aura').classList.add('glow');
                 confetti({ particleCount: 50, spread: 80, origin: { x: 0.6, y: 0.5 }, colors: ['#ff107a', '#ffb3d9', '#fff'], gravity: 0.6 });
             }, 14000);
 
-            // Lilin Tengah Menyala + Flash + Confetti Akbar
             setTimeout(() => { 
                 document.getElementById('flame2').classList.add('ignited'); 
                 
@@ -407,7 +399,6 @@
                 confetti({ particleCount: 200, spread: 360, origin: { x: 0.5, y: 0.4 }, colors: ['#ff107a', '#ffb3d9', '#ffffff'], startVelocity: 45, gravity: 0.7 });
             }, 16000);
 
-            // Hujan Confetti Lembut terus berguguran
             setTimeout(() => {
                 let blastEnd = Date.now() + 18000; 
                 let loop = setInterval(() => {
@@ -416,11 +407,9 @@
                 }, 350);
             }, 17000);
 
-            // Teks Animasi Mengetik Dimulai di bagian atas panggung
             setTimeout(() => {
                 const textPart1 = "Selamat ulang tahun ke 21 Fifi Alya Sa'dliani";
                 typeWriter(textPart1, "typed1", "cursor1", 80, () => {
-                    // Lanjut baris kedua teks pacarku super glow
                     setTimeout(() => {
                         const textPart2 = "atau pacarku hehehe semoga kita sampai di hari paling bahagia ❤️";
                         typeWriter(textPart2, "typed2", "cursor2", 50);
@@ -428,12 +417,10 @@
                 });
             }, 22000);
 
-            // Panggung Utama Memudar untuk transisi tombol menu akhir
             setTimeout(() => { 
                 document.getElementById('main-stage').classList.add('hide-end'); 
             }, 37000);
 
-            // Tepat di detik ke-40, Tombol Pilihan muncul di tengah layar
             setTimeout(() => { 
                 document.getElementById('end-menu').classList.add('show'); 
             }, 40000);
