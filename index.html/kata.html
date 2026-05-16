@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surat Cinta Untuk Princessku ✨</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: linear-gradient(135deg, #ff107a 0%, #3a001c 70%, #000000 100%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+            touch-action: none; 
+        }
+
+        .cinematic-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 40%, transparent 20%, rgba(0,0,0,0.85) 100%);
+            z-index: 0; pointer-events: none;
+        }
+
+        /* --- CANVAS PARTIKEL FLUIDA --- */
+        #ambientCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none; 
+        }
+
+        /* --- FLOATING HEARTS (MENGAMBANG HALUS) --- */
+        .floating-heart {
+            position: fixed;
+            bottom: -50px;
+            color: rgba(255, 179, 217, 0.6); /* Warna pink keputihan transparan */
+            z-index: 2;
+            pointer-events: none;
+            text-shadow: 0 0 10px rgba(255, 16, 122, 0.4);
+            animation: floatGently linear forwards;
+        }
+        
+        @keyframes floatGently {
+            0% { transform: translateY(0) translateX(0) scale(0.8) rotate(-10deg); opacity: 0; }
+            15% { opacity: 0.8; }
+            50% { transform: translateY(-50vh) translateX(30px) scale(1.1) rotate(10deg); }
+            85% { opacity: 0.8; }
+            100% { transform: translateY(-115vh) translateX(-20px) scale(1) rotate(-10deg); opacity: 0; }
+        }
+
+        /* --- WADAH GERBANG AWAL --- */
+        #gate-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px);
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            z-index: 9999; transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .gate-box {
+            text-align: center;
+            background: rgba(20, 0, 10, 0.6);
+            border: 2px solid #ff107a;
+            padding: 40px; border-radius: 15px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(255, 16, 122, 0.3);
+            width: 90%; max-width: 450px; transition: all 0.5s ease;
+        }
+
+        .gate-title {
+            font-family: 'Dancing Script', cursive; font-size: 38px; color: #ffb3d9;
+            text-shadow: 0 0 20px #ff107a; margin-bottom: 30px; line-height: 1.4;
+        }
+
+        .btn-neon {
+            background: rgba(255, 16, 122, 0.1); color: #ffb3d9; border: 1px solid #ff107a;
+            padding: 12px 35px; font-size: 14px; font-weight: 700; letter-spacing: 2px;
+            text-transform: uppercase; border-radius: 5px; cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 16, 122, 0.3);
+            transition: all 0.3s ease; margin: 10px;
+        }
+
+        .btn-neon:hover {
+            background: #ff107a; color: #fff;
+            box-shadow: 0 0 30px #ff107a, 0 0 50px #ff107a; transform: translateY(-3px);
+        }
+
+        .input-neon {
+            width: 85%; padding: 15px; font-size: 22px; text-align: center;
+            background: rgba(0,0,0,0.8); border: 1px solid #ff107a; color: #fff;
+            border-radius: 5px; margin-bottom: 25px; outline: none;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.9);
+            letter-spacing: 5px; font-weight: bold; font-family: 'Montserrat', sans-serif;
+        }
+        .input-neon::placeholder { font-size: 14px; letter-spacing: 2px; font-weight: 400; opacity: 0.5; }
+        .input-neon:focus { border-color: #ffb3d9; box-shadow: 0 0 25px #ff107a, inset 0 0 15px #ff107a; }
+
+        .shake { animation: shakeAnim 0.4s ease-in-out; }
+        @keyframes shakeAnim {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-15px); }
+            50% { transform: translateX(15px); }
+            75% { transform: translateX(-15px); }
+        }
+
+        /* --- BUKU CINTA SINEMATIK --- */
+        #book-stage {
+            position: relative; z-index: 10;
+            width: 90%; max-width: 600px;
+            height: 80vh; max-height: 700px;
+            opacity: 0; pointer-events: none;
+            transform: translateY(60px) scale(0.95);
+            transition: all 2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        #book-stage.show {
+            opacity: 1; pointer-events: auto; 
+            transform: translateY(0) scale(1);
+        }
+
+        .real-book {
+            width: 100%; height: 100%;
+            background: #0a0004; 
+            border: 2px solid #ff107a;
+            border-radius: 5px 25px 25px 5px; 
+            box-shadow: 
+                20px 20px 40px rgba(0,0,0,0.9), 
+                inset 30px 0 40px rgba(0,0,0,0.95), 
+                inset -5px 0 15px rgba(255, 16, 122, 0.3), 
+                0 0 50px rgba(255, 16, 122, 0.2); 
+            position: relative;
+            padding: 40px 30px 40px 60px; 
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            border-right: 8px solid #ffb3d9; 
+        }
+
+        .bookmark-ribbon {
+            position: absolute;
+            top: -10px; right: 45px;
+            width: 25px; height: 80px;
+            background: linear-gradient(to bottom, #ff107a, #a30048);
+            box-shadow: 2px 5px 15px rgba(0,0,0,0.6);
+            z-index: 5;
+        }
+        .bookmark-ribbon::after {
+            content: ''; position: absolute;
+            bottom: -15px; left: 0;
+            border-width: 15px 12.5px 0 12.5px;
+            border-style: solid;
+            border-color: #a30048 transparent transparent transparent;
+        }
+
+        .book-content {
+            font-family: 'Caveat', cursive;
+            font-size: 26px; color: #ffebf3; line-height: 1.6;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 5px rgba(255, 16, 122, 0.5);
+            flex-grow: 1; overflow-y: auto;
+            padding-right: 15px;
+            position: relative; z-index: 10;
+        }
+
+        .book-content::-webkit-scrollbar { width: 4px; }
+        .book-content::-webkit-scrollbar-track { background: transparent; }
+        .book-content::-webkit-scrollbar-thumb { background: #ff107a; border-radius: 10px; }
+
+        .type-cursor {
+            display: inline-block; width: 3px; height: 26px;
+            background-color: #ff107a; vertical-align: bottom;
+            box-shadow: 0 0 10px #ff107a;
+            animation: blink 0.8s infinite;
+        }
+
+        /* --- TOMBOL KEMBALI DI UJUNG ATAS --- */
+        #top-back-btn {
+            position: fixed; top: 25px; right: 25px;
+            opacity: 0; pointer-events: none; transition: all 1.5s ease; z-index: 200;
+        }
+
+        #top-back-btn.show { opacity: 1; pointer-events: auto; }
+
+        .btn-corner {
+            background: rgba(10, 0, 5, 0.8); color: #ffb3d9; border: 1px solid #ff107a;
+            padding: 10px 25px; font-size: 12px; font-weight: 700; letter-spacing: 2px;
+            text-transform: uppercase; border-radius: 5px; cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8); transition: all 0.3s ease;
+        }
+
+        .btn-corner:hover { background: #ff107a; color: #fff; transform: translateY(-2px); }
+
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" src="Ariana Grande, Justin Bieber - Stuck with U (Official Lyric Video).mp3" loop preload="auto"></audio>
+
+    <div class="cinematic-overlay"></div>
+    <canvas id="ambientCanvas"></canvas>
+
+    <div id="top-back-btn">
+        <button class="btn-corner" onclick="location.href='index.html#menu'">← KEMBALI</button>
+    </div>
+
+    <div id="gate-screen">
+        <div class="gate-box" id="step-1">
+            <h2 class="gate-title">Udah buka semua hadiahnya sayang? 🎁</h2>
+            <button class="btn-neon" onclick="checkGifts('iyya')">Iyya</button>
+            <button class="btn-neon" onclick="checkGifts('tidak')">Belum</button>
+        </div>
+
+        <div class="gate-box" id="step-2" style="display: none;">
+            <h2 class="gate-title">Masukkan Sandi ❤️</h2>
+            <p style="font-size: 13px; color: #ffb3d9; opacity: 0.7; margin-bottom: 20px;">(Tanggal yang berhenti mo tolak ka)</p>
+            
+            <input type="text" id="passInput" class="input-neon" placeholder="Ketik angka..." 
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '')" autocomplete="off" maxlength="8">
+            <br>
+            <button class="btn-neon" onclick="verifyPassword()">Buka Buku</button>
+        </div>
+    </div>
+
+    <div id="book-stage">
+        <div class="real-book">
+            <div class="bookmark-ribbon"></div>
+            <div class="book-content" id="typed-text-container">
+                <span id="typed-output"></span><span class="type-cursor" id="cursor" style="display:none;"></span>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const suratCinta = `Meskipun belum pernah ki ketemu, saya mi orang yang paling kagum lihat kecantikanmu. 
+        
+Saya mi orang yang selalu perhatikan dirimu, sayang. Ku suka sekali kau mi orang yang selama ini ku cari. Makasih nahh princesku, wanita paling indah.
+
+Semoga dipermudahkan semua jalanmu dan tercapai mimpimu, yaitu menikah sama saya heheheheh. Tapi semoga selalu bahagia dan tidak pernah menangis. 
+
+Apa pun untuk kau selalu kuusahakan sebaik mungkin, sayangku. Kau mi orang paling cantikk di dunia. I lovee. 
+
+Semoga yang ke-21 ini tidak mu bombe maka aminnn. 
+HBD sayangku princess ku tiram bakar ku cuko palembang ku ❤️`;
+
+        function checkGifts(answer) {
+            if(answer === 'tidak') {
+                window.location.href = 'index.html#menu';
+            } else if (answer === 'iyya') {
+                document.getElementById('step-1').style.display = 'none';
+                document.getElementById('step-2').style.display = 'block';
+            }
+        }
+
+        function verifyPassword() {
+            const input = document.getElementById('passInput').value;
+            const correctPass = "10052026"; 
+
+            if(input === correctPass) {
+                const music = document.getElementById('bgMusic');
+                // Mulai dengan volume sangat kecil
+                music.volume = 0.1;
+                // Lompat ke menit 1:38 (98 detik)
+                music.currentTime = 98; 
+                music.play();
+
+                // FUNGSI FADE IN MUSIK (Pelan perlahan naik normal)
+                let fadeAudio = setInterval(function () {
+                    if (music.volume < 0.8) {
+                        music.volume = Math.min(0.8, music.volume + 0.05);
+                    } else {
+                        clearInterval(fadeAudio);
+                    }
+                }, 300); // Volume naik setiap 300ms
+
+                confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: ['#ff107a', '#ffb3d9', '#fff'], startVelocity: 45 });
+
+                document.getElementById('gate-screen').style.opacity = '0';
+                setTimeout(() => { 
+                    document.getElementById('gate-screen').style.visibility = 'hidden'; 
+                    startBookCinematic(); 
+                }, 1000);
+
+            } else {
+                const box = document.getElementById('step-2');
+                box.classList.remove('shake');
+                void box.offsetWidth; 
+                box.classList.add('shake');
+                document.getElementById('passInput').value = '';
+                document.getElementById('passInput').placeholder = "Sandi Salah!";
+            }
+        }
+
+        // --- FUNGSI MENGAMBANG LOVE (GENTLE FLOATING HEARTS) ---
+        function startFloatingHearts() {
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.className = 'floating-heart';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 10 + 10) + 's'; // Melayang perlahan 10-20 detik
+                heart.style.fontSize = (Math.random() * 8 + 12) + 'px'; // Ukuran random lebih kecil agar estetik
+                document.body.appendChild(heart);
+                
+                setTimeout(() => { heart.remove(); }, 20000); // Bersihkan agar memori aman
+            }, 600); // Muncul setiap 0.6 detik
+        }
+
+        // --- TYPEWRITER ---
+        function typeWriter30Seconds(text, outputId, cursorId, callback) {
+            const targetDurationMs = 28000; 
+            const charCount = text.length;
+            const speedPerChar = targetDurationMs / charCount; 
+            
+            let i = 0;
+            const outputObj = document.getElementById(outputId);
+            document.getElementById(cursorId).style.display = "inline-block";
+
+            function type() {
+                if (i < text.length) {
+                    if(text.charAt(i) === '\n') {
+                        outputObj.innerHTML += '<br>';
+                    } else {
+                        outputObj.innerHTML += text.charAt(i);
+                    }
+                    
+                    const container = document.getElementById('typed-text-container');
+                    container.scrollTop = container.scrollHeight;
+
+                    i++;
+                    setTimeout(type, speedPerChar);
+                } else {
+                    document.getElementById(cursorId).style.display = "none";
+                    if(callback) callback();
+                }
+            }
+            type();
+        }
+
+        function startBookCinematic() {
+            const stage = document.getElementById('book-stage');
+            stage.classList.add('show');
+            
+            // Mulai hujan love yang melayang lembut
+            startFloatingHearts();
+
+            setTimeout(() => {
+                typeWriter30Seconds(suratCinta, 'typed-output', 'cursor', () => {
+                    confetti({ particleCount: 200, spread: 360, origin: { y: 0.5 }, colors: ['#ff107a', '#ffb3d9', '#ffffff'], startVelocity: 50 });
+                    
+                    setTimeout(() => {
+                        document.getElementById('top-back-btn').classList.add('show');
+                    }, 1500);
+                });
+            }, 1000); 
+        }
+
+        // --- PARTIKEL DEBU BINTANG (KECIL, BANYAK, INTERAKTIF) ---
+        const canvas = document.getElementById('ambientCanvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+        let mouse = { x: -1000, y: -1000 };
+        window.addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
+        window.addEventListener('pointerout', () => { mouse.x = -1000; mouse.y = -1000; });
+        window.addEventListener('touchend', () => { mouse.x = -1000; mouse.y = -1000; });
+
+        let dots = [];
+        class Dot {
+            constructor() {
+                this.x = Math.random() * canvas.width; 
+                this.y = Math.random() * canvas.height;
+                this.baseSize = Math.random() * 1.2 + 0.5; // Ukuran lebih kecil (estetik debu bintang)
+                this.size = this.baseSize;
+                this.baseVx = (Math.random() - 0.5) * 0.3; 
+                this.baseVy = Math.random() * -0.5 - 0.1; 
+                this.vx = this.baseVx; 
+                this.vy = this.baseVy;
+                this.baseOpacity = Math.random() * 0.5 + 0.1; 
+                this.opacity = this.baseOpacity;
+                
+                // Warna dasar putih sedikit pink
+                this.baseColor = '#ffeef5'; 
+                // Warna saat tersentuh (Neon Pink)
+                this.touchColor = '#ff107a';
+                this.currentColor = this.baseColor;
+            }
+            update() {
+                let dx = this.x - mouse.x; 
+                let dy = this.y - mouse.y; 
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                let interactionRadius = 200; 
+                
+                if (dist < interactionRadius) {
+                    // PARTIKEL TERTARIK KE KURSOR & BERUBAH WARNA
+                    let force = (interactionRadius - dist) / interactionRadius;
+                    let angle = Math.atan2(dy, dx);
+                    
+                    this.vx -= Math.cos(angle) * force * 1.5; 
+                    this.vy -= Math.sin(angle) * force * 1.5;
+                    
+                    this.opacity = 1; 
+                    this.size = this.baseSize * 2.5; 
+                    this.currentColor = this.touchColor; // Berubah jadi pink neon menyala
+                } else {
+                    // Kembali ke keadaan semula
+                    this.opacity += (this.baseOpacity - this.opacity) * 0.05; 
+                    this.size += (this.baseSize - this.size) * 0.05;
+                    this.vx += (this.baseVx - this.vx) * 0.05;
+                    this.vy += (this.baseVy - this.vy) * 0.05;
+                    this.currentColor = this.baseColor;
+                }
+
+                this.vx *= 0.92; 
+                this.vy *= 0.92; 
+                
+                this.x += this.vx; 
+                this.y += this.vy;
+
+                if (this.y < -20) { this.y = canvas.height + 20; this.x = Math.random() * canvas.width; }
+                if (this.x < -20) this.x = canvas.width + 20; 
+                if (this.x > canvas.width + 20) this.x = -20;
+            }
+            draw() {
+                ctx.globalAlpha = this.opacity; 
+                ctx.beginPath(); 
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.currentColor; 
+                ctx.shadowColor = this.currentColor; 
+                
+                // Cahaya lebih terang kalau tersentuh
+                ctx.shadowBlur = this.currentColor === this.touchColor ? this.size * 6 : this.size * 2; 
+                ctx.fill();
+            }
+        }
+        
+        // Ditambah jadi 400 partikel agar rimbun tapi kecil-kecil estetik
+        for(let i=0; i<400; i++) dots.push(new Dot()); 
+        
+        function animateCanvas() { 
+            ctx.clearRect(0,0,canvas.width,canvas.height); 
+            dots.forEach(d => { d.update(); d.draw(); }); 
+            requestAnimationFrame(animateCanvas); 
+        }
+        animateCanvas();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kejutan Terindah Untuk Fifi ✨</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: radial-gradient(circle at center, #0a0004 0%, #020001 100%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+            touch-action: none; 
+        }
+
+        /* --- KILATAN CAHAYA HALUS --- */
+        #flash-effect {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 9998; opacity: 0; pointer-events: none;
+            transition: opacity 0.8s ease-out;
+        }
+
+        /* --- CANVAS PARTIKEL INTERAKTIF --- */
+        #ambientCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none; 
+        }
+
+        /* --- LAYAR PEMBUKA --- */
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000000; display: flex; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .btn-neon {
+            background: rgba(255, 16, 122, 0.05); color: #ff107a; border: 2px solid #ff107a;
+            padding: 18px 45px; font-size: 16px; font-weight: 800; letter-spacing: 3px;
+            text-transform: uppercase; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 16, 122, 0.5), inset 0 0 15px rgba(255, 16, 122, 0.3);
+            transition: all 0.4s ease; position: relative; z-index: 100;
+            backdrop-filter: blur(5px); animation: pulseBtn 2s infinite;
+        }
+
+        @keyframes pulseBtn {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 16, 122, 0.5), inset 0 0 15px rgba(255, 16, 122, 0.3); transform: scale(1); }
+            50% { box-shadow: 0 0 35px rgba(255, 16, 122, 0.8), inset 0 0 25px rgba(255, 16, 122, 0.5); transform: scale(1.05); text-shadow: 0 0 10px #ff107a; }
+        }
+
+        .btn-neon:hover {
+            background: #ff107a; color: #000;
+            box-shadow: 0 0 50px #ff107a, 0 0 80px #ff107a; transform: scale(1.1) !important; animation: none;
+        }
+
+        /* --- WADAH UTAMA --- */
+        #main-stage {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            opacity: 0; 
+            pointer-events: none;
+            transition: opacity 1.5s ease;
+        }
+
+        #main-stage.show {
+            opacity: 1;
+        }
+
+        /* TEKS DI ATAS (FIXED POSITION) */
+        #text-container {
+            position: absolute;
+            top: 10%; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 600px;
+            text-align: center;
+            z-index: 20;
+        }
+
+        .type-text-1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 45px;
+            color: #ffb3d9;
+            text-shadow: 0 0 15px #ff107a, 0 0 30px #ff107a;
+            margin-bottom: 15px;
+            min-height: 60px;
+        }
+
+        .type-text-2 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-style: italic;
+            font-size: 15px;
+            letter-spacing: 1px;
+            line-height: 1.6;
+            color: #ffc2df;
+            text-shadow: 0 0 5px #ff107a, 0 0 15px #ff107a, 0 0 25px #ff107a;
+            min-height: 50px;
+        }
+
+        .cursor {
+            display: inline-block; width: 2.5px; background-color: #fff;
+            animation: blink 0.7s infinite;
+            box-shadow: 0 0 10px #ff107a;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* KUE DI BAWAH (MEWAH & BESAR) */
+        #cake-wrapper {
+            position: absolute;
+            bottom: 5%; 
+            left: 50%;
+            transform: translateX(-50%) scale(0.6) translateY(50px); 
+            width: 500px; 
+            max-width: 90vw; 
+            height: 550px; 
+            transition: all 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+        }
+
+        #main-stage.show #cake-wrapper {
+            transform: translateX(-50%) scale(1) translateY(0);
+        }
+
+        #main-stage.hide-end #cake-wrapper { 
+            transform: translateX(-50%) scale(0.7) translateY(100px); 
+            opacity: 0.05; 
+            filter: blur(15px); 
+        }
+
+        .cake-aura {
+            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);
+            width: 400px; height: 400px; border-radius: 50%; z-index: -1; opacity: 0;
+            background: radial-gradient(circle, rgba(255, 16, 122, 0.3) 0%, transparent 65%);
+            transition: opacity 2s ease, transform 2s ease;
+        }
+
+        .cake-aura.glow {
+            opacity: 1; transform: translate(-50%, -50%) scale(1.3);
+            animation: breatheAura 3s infinite alternate;
+        }
+
+        @keyframes breatheAura {
+            0% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
+            100% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; filter: blur(5px); }
+        }
+
+        svg { width: 100%; height: 100%; overflow: visible; }
+
+        .draw-line {
+            stroke-dasharray: var(--len); stroke-dashoffset: var(--len);
+            stroke-linecap: round; stroke-linejoin: round;
+            filter: drop-shadow(0 0 5px #ffb3d9) drop-shadow(0 0 15px #ff107a);
+        }
+
+        #main-stage.start-draw .draw-line { 
+            animation: drawPath 2.3s ease-in-out forwards; 
+            animation-delay: var(--del); 
+        }
+
+        @keyframes drawPath {
+            0% { stroke-dashoffset: var(--len); filter: drop-shadow(0 0 2px #ff107a); }
+            50% { filter: drop-shadow(0 0 20px #ff107a) drop-shadow(0 0 40px #fff); stroke-width: 7; }
+            100% { stroke-dashoffset: 0; filter: drop-shadow(0 0 6px #ffb3d9) drop-shadow(0 0 18px #ff107a); stroke-width: 5; }
+        }
+
+        .stable-glow { animation: steadyGlow 2s infinite alternate !important; }
+
+        @keyframes steadyGlow {
+            0% { filter: drop-shadow(0 0 5px #ffb3d9) drop-shadow(0 0 15px #ff107a) drop-shadow(0 0 30px #ff107a); }
+            100% { filter: drop-shadow(0 0 10px #fff) drop-shadow(0 0 25px #ff107a) drop-shadow(0 0 50px #ff107a); }
+        }
+
+        /* ANIMASI LILIN SUPER SMOOTH */
+        .flame {
+            opacity: 0; transform: scale(0); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 0 15px #fff) drop-shadow(0 0 35px #ff107a) drop-shadow(0 0 65px #ff107a);
+        }
+
+        .flame.ignited { 
+            opacity: 1; transform: scale(1); 
+            animation: smoothFlameFlicker 1.2s infinite ease-in-out alternate; 
+        }
+
+        #flame1.ignited { animation-delay: 0s; }
+        #flame2.ignited { animation-delay: 0.3s; }
+        #flame3.ignited { animation-delay: 0.6s; }
+
+        @keyframes smoothFlameFlicker {
+            0% { transform: scale(1) rotate(-1.5deg) skewX(-1deg); filter: drop-shadow(0 0 12px #fff) drop-shadow(0 0 25px #ff107a); }
+            35% { transform: scale(1.06) rotate(1deg) skewX(0.5deg); filter: drop-shadow(0 0 15px #fff) drop-shadow(0 0 35px #ff107a); }
+            70% { transform: scale(0.95) rotate(-1deg) skewX(-0.5deg); filter: drop-shadow(0 0 11px #fff) drop-shadow(0 0 22px #ff107a); }
+            100% { transform: scale(1.08) rotate(2deg) skewX(1deg); filter: drop-shadow(0 0 16px #fff) drop-shadow(0 0 40px #ff107a); }
+        }
+
+        /* --- MENU AKHIR (DI TENGAH) --- */
+        #end-menu {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
+            display: flex; flex-direction: column; align-items: center; gap: 25px;
+            opacity: 0; pointer-events: none; transition: all 1.5s ease;
+            z-index: 200; width: 90%; max-width: 400px;
+        }
+
+        #end-menu.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+
+        .btn-small { width: 100%; padding: 18px 20px; font-size: 14px; letter-spacing: 2px; animation: none; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" src="HAPPY BIRTHDAY INSTRUMENTAL.mp3" preload="auto"></audio>
+
+    <div id="flash-effect"></div>
+
+    <canvas id="ambientCanvas"></canvas>
+
+    <div id="intro-screen">
+        <button class="btn-neon" onclick="startTimeline()">INI UNTUKMU SAYANG KU</button>
+    </div>
+
+    <div id="main-stage">
+        
+        <div id="text-container">
+            <div class="type-text-1" id="text1"><span id="typed1"></span><span class="cursor" id="cursor1" style="display:none;">&nbsp;</span></div>
+            <div class="type-text-2" id="text2"><span id="typed2"></span><span class="cursor" id="cursor2" style="display:none;">&nbsp;</span></div>
+        </div>
+
+        <div id="cake-wrapper">
+            <div class="cake-aura" id="aura"></div>
+            
+            <svg viewBox="0 0 500 550">
+                <ellipse cx="250" cy="500" rx="190" ry="20" fill="none" stroke="#ff107a" stroke-width="5" class="draw-line" style="--len: 1200; --del: 0.5s;" />
+                
+                <path d="M 90 500 L 90 370 Q 90 360 100 360 L 400 360 Q 410 360 410 370 L 410 500" fill="none" stroke="#ff107a" stroke-width="5" class="draw-line" style="--len: 1000; --del: 1s;" />
+                <path d="M 90 360 Q 110 390 130 360 Q 150 390 170 360 Q 190 390 210 360 Q 230 390 250 360 Q 270 390 290 360 Q 310 390 330 360 Q 350 390 370 360 Q 390 390 410 360" fill="none" stroke="#ff107a" stroke-width="5" class="draw-line" style="--len: 550; --del: 1.5s;" />
+                <circle cx="130" cy="375" r="3.5" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <circle cx="170" cy="375" r="3.5" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <circle cx="210" cy="375" r="3.5" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <circle cx="250" cy="375" r="3.5" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <circle cx="290" cy="375" r="3.5" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <circle cx="330" cy="375" r="3.5" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <circle cx="370" cy="375" r="3.5" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <path d="M 120 450 Q 152.5 420 185 450 T 250 450 T 315 450 T 380 450" fill="none" stroke="#ffb3d9" stroke-width="3" stroke-linecap="round" class="draw-line" style="--len: 300; --del: 2s;" />
+
+                <path d="M 130 360 L 130 240 Q 130 230 140 230 L 360 230 Q 370 230 370 240 L 370 360" fill="none" stroke="#ff107a" stroke-width="5" class="draw-line" style="--len: 800; --del: 2.5s;" />
+                <path d="M 130 230 Q 149 260 168 230 Q 187 260 206 230 Q 225 260 244 230 Q 263 260 282 230 Q 301 260 320 230 Q 339 260 358 230 Q 377 260 370 230" fill="none" stroke="#ff107a" stroke-width="5" class="draw-line" style="--len: 400; --del: 3s;" />
+                <circle cx="168" cy="245" r="3" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <circle cx="206" cy="245" r="3" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <circle cx="244" cy="245" r="3" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <circle cx="282" cy="245" r="3" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <circle cx="320" cy="245" r="3" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <circle cx="358" cy="245" r="3" fill="#fff" filter="drop-shadow(0 0 5px #ff107a)"/>
+                <circle cx="250" cy="330" r="8" fill="none" stroke="#ffb3d9" stroke-width="4" class="draw-line" style="--len: 60; --del: 3.5s;"/>
+                <path d="M 242 330 Q 200 300 200 340 Q 200 360 246 336" fill="none" stroke="#ffb3d9" stroke-width="4" class="draw-line" style="--len: 150; --del: 3.7s;" />
+                <path d="M 258 330 Q 300 300 300 340 Q 300 360 254 336" fill="none" stroke="#ffb3d9" stroke-width="4" class="draw-line" style="--len: 150; --del: 3.9s;" />
+
+                <path d="M 170 230 L 170 120 Q 170 110 180 110 L 320 110 Q 330 110 330 120 L 330 230" fill="none" stroke="#ff107a" stroke-width="5" class="draw-line" style="--len: 600; --del: 4.5s;" />
+                <path d="M 170 110 Q 185 140 200 110 Q 215 140 230 110 Q 245 140 260 110 Q 275 140 290 110 Q 305 140 320 110 Q 320 140 330 110" fill="none" stroke="#ff107a" stroke-width="5" class="draw-line" style="--len: 300; --del: 5s;" />
+                <path d="M 250 175 C 250 175 225 145 205 165 C 185 185 250 225 250 225 C 250 225 315 185 295 165 C 275 145 250 175 250 175 Z" fill="none" stroke="#ffb3d9" stroke-width="4" class="draw-line" style="--len: 250; --del: 5.5s;" />
+
+                <path d="M 50 220 Q 50 225 55 225 Q 50 225 50 230 Q 50 225 45 225 Q 50 225 50 220" fill="none" stroke="#fff" stroke-width="2" class="draw-line" style="--len: 40; --del: 6s;" />
+                <path d="M 70 150 Q 70 155 75 155 Q 70 155 70 160 Q 70 155 65 155 Q 70 155 70 150" fill="none" stroke="#ffb3d9" stroke-width="2" class="draw-line" style="--len: 40; --del: 6.2s;" />
+                <path d="M 450 220 Q 450 225 455 225 Q 450 225 450 230 Q 450 225 445 225 Q 450 225 450 220" fill="none" stroke="#fff" stroke-width="2" class="draw-line" style="--len: 40; --del: 6s;" />
+                <path d="M 430 150 Q 430 155 435 155 Q 430 155 430 160 Q 430 155 425 155 Q 430 155 430 150" fill="none" stroke="#ffb3d9" stroke-width="2" class="draw-line" style="--len: 40; --del: 6.2s;" />
+
+                <line x1="210" y1="110" x2="210" y2="30" stroke="#ffb3d9" stroke-width="10" stroke-linecap="round" class="draw-line" style="--len: 90; --del: 6.5s;" />
+                <line x1="250" y1="110" x2="250" y2="15" stroke="#ffb3d9" stroke-width="10" stroke-linecap="round" class="draw-line" style="--len: 105; --del: 6.7s;" />
+                <line x1="290" y1="110" x2="290" y2="30" stroke="#ffb3d9" stroke-width="10" stroke-linecap="round" class="draw-line" style="--len: 90; --del: 6.9s;" />
+
+                <g id="flame1" class="flame" style="transform-origin: 210px 20px;">
+                    <path d="M 210 25 Q 198 0 210 -20 Q 222 0 210 25" fill="#fff" />
+                </g>
+                <g id="flame2" class="flame" style="transform-origin: 250px 5px;">
+                    <path d="M 250 10 Q 238 -15 250 -35 Q 262 -15 250 10" fill="#fff" />
+                </g>
+                <g id="flame3" class="flame" style="transform-origin: 290px 20px;">
+                    <path d="M 290 25 Q 278 0 290 -20 Q 302 0 290 25" fill="#fff" />
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <div id="end-menu">
+        <button class="btn-neon btn-small" onclick="location.reload()">Mau di ulang lagi sayang ku?</button>
+        <button class="btn-neon btn-small" onclick="location.href='index.html#menu'">Kembali ke pilihan sayang</button>
+    </div>
+
+    <script>
+        // --- LOGIKA PARTIKEL INTERAKTIF ---
+        const canvas = document.getElementById('ambientCanvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+        let mouse = { x: -1000, y: -1000 };
+        window.addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
+        window.addEventListener('pointerout', () => { mouse.x = -1000; mouse.y = -1000; });
+        window.addEventListener('touchend', () => { mouse.x = -1000; mouse.y = -1000; });
+
+        let dots = [];
+        class Dot {
+            constructor() {
+                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+                this.baseSize = Math.random() * 2 + 1; this.size = this.baseSize;
+                this.baseVy = Math.random() * -0.5 - 0.1; this.vx = 0; this.vy = 0;
+                this.baseOpacity = Math.random() * 0.4 + 0.1; this.opacity = this.baseOpacity;
+            }
+            update() {
+                let dx = this.x - mouse.x; let dy = this.y - mouse.y; let dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < 180) {
+                    let force = (180 - dist) / 180;
+                    this.vx += (dx / dist) * force * 1.5; this.vy += (dy / dist) * force * 1.5;
+                    this.opacity = 1; this.size = this.baseSize * 2; 
+                } else {
+                    this.opacity += (this.baseOpacity - this.opacity) * 0.05; this.size += (this.baseSize - this.size) * 0.05;
+                }
+                this.vx *= 0.92; this.vy *= 0.92; this.x += this.vx; this.y += this.baseVy + this.vy;
+                if (this.y < -20) { this.y = canvas.height + 20; this.x = Math.random() * canvas.width; }
+                if (this.x < -20) this.x = canvas.width + 20; if (this.x > canvas.width + 20) this.x = -20;
+            }
+            draw() {
+                ctx.globalAlpha = this.opacity; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff107a'; ctx.shadowColor = '#ffb3d9'; ctx.shadowBlur = this.size * 4; ctx.fill();
+            }
+        }
+        for(let i=0; i<80; i++) dots.push(new Dot());
+        function animateCanvas() { ctx.clearRect(0,0,canvas.width,canvas.height); dots.forEach(d => { d.update(); d.draw(); }); requestAnimationFrame(animateCanvas); }
+        animateCanvas();
+
+        // --- FUNGSI TYPEWRITER ---
+        function typeWriter(text, elementId, cursorId, speed, callback) {
+            let i = 0;
+            document.getElementById(cursorId).style.display = "inline-block";
+            function type() {
+                if (i < text.length) {
+                    document.getElementById(elementId).innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    document.getElementById(cursorId).style.display = "none";
+                    if(callback) callback();
+                }
+            }
+            type();
+        }
+
+        // --- SUTRADARA TIMELINE ---
+        function startTimeline() {
+            document.getElementById('bgMusic').volume = 0.8;
+            document.getElementById('bgMusic').play();
+
+            document.getElementById('intro-screen').style.opacity = '0';
+            setTimeout(() => { document.getElementById('intro-screen').style.visibility = 'hidden'; }, 1500);
+
+            setTimeout(() => { 
+                const mainStage = document.getElementById('main-stage');
+                mainStage.classList.add('show', 'start-draw'); 
+            }, 2000);
+
+            setTimeout(() => { 
+                document.querySelectorAll('.draw-line').forEach(l => { 
+                    l.style.strokeDasharray = 'none'; l.classList.add('stable-glow'); 
+                }); 
+            }, 10000);
+
+            setTimeout(() => { 
+                document.getElementById('flame1').classList.add('ignited'); 
+                confetti({ particleCount: 50, spread: 80, origin: { x: 0.4, y: 0.5 }, colors: ['#ff107a', '#ffb3d9', '#fff'], gravity: 0.6 });
+            }, 12000);
+
+            setTimeout(() => { 
+                document.getElementById('flame3').classList.add('ignited'); 
+                document.getElementById('aura').classList.add('glow');
+                confetti({ particleCount: 50, spread: 80, origin: { x: 0.6, y: 0.5 }, colors: ['#ff107a', '#ffb3d9', '#fff'], gravity: 0.6 });
+            }, 14000);
+
+            setTimeout(() => { 
+                document.getElementById('flame2').classList.add('ignited'); 
+                
+                const flash = document.getElementById('flash-effect');
+                flash.style.opacity = '0.6';
+                setTimeout(() => { flash.style.opacity = '0'; }, 600);
+
+                confetti({ particleCount: 200, spread: 360, origin: { x: 0.5, y: 0.4 }, colors: ['#ff107a', '#ffb3d9', '#ffffff'], startVelocity: 45, gravity: 0.7 });
+            }, 16000);
+
+            setTimeout(() => {
+                let blastEnd = Date.now() + 18000; 
+                let loop = setInterval(() => {
+                    if (Date.now() > blastEnd) return clearInterval(loop);
+                    confetti({ particleCount: 12, spread: 150, origin: { x: Math.random(), y: -0.1 }, colors: ['#ff107a', '#ffb3d9', '#fff'], gravity: 0.5, ticks: 300 });
+                }, 350);
+            }, 17000);
+
+            setTimeout(() => {
+                const textPart1 = "Selamat ulang tahun ke 21 Fifi Alya Sa'dliani";
+                typeWriter(textPart1, "typed1", "cursor1", 80, () => {
+                    setTimeout(() => {
+                        const textPart2 = "atau pacarku hehehe semoga kita sampai di hari paling bahagia ❤️";
+                        typeWriter(textPart2, "typed2", "cursor2", 50);
+                    }, 500);
+                });
+            }, 22000);
+
+            setTimeout(() => { 
+                document.getElementById('main-stage').classList.add('hide-end'); 
+            }, 37000);
+
+            setTimeout(() => { 
+                document.getElementById('end-menu').classList.add('show'); 
+            }, 40000);
+        }
+    </script>
+</body>
+</html>
